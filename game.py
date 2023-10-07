@@ -43,6 +43,14 @@ def animacao_perso():
     tela.blit(jogador, jogador_rect)
 
 def atacar():
+    
+    global atacar_index
+
+    atacar_index += 0.09
+    if atacar_index > len(atacar_superfice) -1:
+        atacar_index = 0
+
+    tela.blit(spider_superfice[int(spider_index)], knight_idle_superfice)
 
 
 ##
@@ -82,6 +90,17 @@ for imagem in range(1, 5):
     knight_andando_superfice.append(img)
 
 jogador_rect = knight_idle_superfice[player_index].get_rect( center = (100, 430))    
+
+##Animacao atacar
+atacar_index = 0
+atacar_superfice = []
+
+for imagem in range(1, 5):
+    img = pygame.image.load(f'assets/knight/5 ATTACK_000.png').convert_alpha()
+    img = pygame.transform.scale(img, (150, 150))
+    atacar_superfice.append(img)   
+
+    atacar_rect = atacar_superfice[atacar_index].get_rect(center = (100, 430))
 
 ##Inimigo 1 cenario 1
 spider_index = 0
