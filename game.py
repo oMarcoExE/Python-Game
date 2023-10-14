@@ -10,6 +10,15 @@ tamanho = (960, 540)
 tela = pygame.display.set_mode(tamanho)
 pygame.display.set_caption("Luta na ponte")
 
+def desenhar_barra_vida(vida):
+    largura_barra = 200
+    altura_barra = 20
+    cor_verde = (0, 255, 0)  # Cor verde
+    cor_vermelha = (255, 0, 0)  # Cor vermelha
+    if vida > 0:
+        pygame.draw.rect(tela, cor_verde, (400, 50, largura_barra * (vida / 100), altura_barra))
+    pygame.draw.rect(tela, cor_vermelha, (400, 50, largura_barra, altura_barra), 2)
+
 def animacao_enemies():
     global spider_index
 
@@ -110,9 +119,12 @@ for imagem in range(1, 13):
     img = pygame.image.load(f'assets/enemies/Spider/Spider_{imagem}.png').convert_alpha()
     img = pygame.transform.scale(img, (90, 90))
     spider_superfice.append(img)
+spider_rect = spider_superfice[int(spider_index)].get_rect(topleft=(400, 180))
 
 movimento_personagem = 0
 direcao_personagem = 0
+dano_jogador = 10
+vida_inimigo = 100
 
 status = True
 ## Loop principal
@@ -140,7 +152,11 @@ while True:
                 direcao_personagem = 0
 
             if evento.key == pygame.K_SPACE:
-                atacar()
+                if evento.key == pygame.K_SPACE:
+                    if jogador_rect.colliderect(spider_rect):
+                        vida_inimigo -= dano_jogador
+                        if vida_inimigo <= 0:
+                            vida_inimigo = 0
 
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_RIGHT:
@@ -170,6 +186,7 @@ while True:
 
     animacao_perso()
     animacao_enemies()
+    desenhar_barra_vida(vida_inimigo)
 
     pygame.display.update()
 
