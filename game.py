@@ -43,11 +43,11 @@ def animacao_enemies():
 def spider_ataque():
     global vidaKnight
     global ataque_projetil
+    global rect
 
     ataque_spider = (randint(0, 5000))
-
+    rect = projSpider.get_rect(center=spider_rect.center)
     if ataque_spider >= 0 and ataque_spider < 100:
-        rect = projSpider.get_rect(center=spider_rect.center)
 
         # Ataque de projetil
         ataque_projetil.append({
@@ -56,33 +56,28 @@ def spider_ataque():
             'destino': jogador_rect.center
         })
 
+
     elif ataque_spider > 150 and ataque_spider <= 200:
-        if jogador_rect.colliderect(spider_rect):
-            vidaKnight -= dano_spider+10
-            ataque_2_spider()
-    
-# def ataque_1_spider():
-#     global ataque_projetil
-
-#     for projetil in ataque_projetil:
-
-#         projetil['projetil'].x += projetil['velocidade']
-
-#         tela.blit(projSpider, projSpider_rect)
-
+        #if jogador_rect.colliderect(spider_rect):
+            #vidaKnight -= dano_spider+10
+            #ataque_2_spider()
+        pass
     
 def animar_projeteis():
+    global vidaKnight
     for projetil in ataque_projetil:
         dest_x, dest_y = projetil['destino']
         vel = projetil['velocidade']
         proj = projetil['rect']
 
-        if proj.x < dest_x: proj.x += vel
+        if proj.x < dest_x: proj.x += vel 
         if proj.y < dest_y: proj.y += vel
 
         if proj.x > dest_x: proj.x -= vel
         if proj.y > dest_y: proj.y -= vel
      
+        if jogador_rect.colliderect(rect):
+            pass
         tela.blit(projSpider, proj)
  
 
@@ -173,7 +168,6 @@ Background2 = pygame.transform.scale(Background2, tamanho)
 knight_idle = pygame.transform.scale(knight_idle, tamanho)
 vidapixel = pygame.transform.scale(vidapixel, (50, 50))
 projSpider = pygame.transform.scale(projSpider, (110, 110))
-# projSpider_rect = projSpider.get_rect(center=(400, 180))
 atk2Spider = pygame.transform.scale(atk2Spider, (110, 150))
 
 
