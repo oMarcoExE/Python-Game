@@ -1,5 +1,6 @@
 import pygame
 from sys import exit
+from random import randint, choice
 
 pygame.init()
 
@@ -13,11 +14,22 @@ pygame.display.set_caption("Luta na ponte")
 def desenhar_barra_vida(vida):
     largura_barra = 200
     altura_barra = 20
-    cor_verde = (0, 255, 0)  # Cor verde
-    cor_vermelha = (255, 0, 0)  # Cor vermelha
+    cor_vermelha = (255, 0, 0)  # Cor verde
+    cor_preta = (0, 0, 0)  # Cor vermelha
     if vida > 0:
-        pygame.draw.rect(tela, cor_verde, (400, 50, largura_barra * (vida / 100), altura_barra))
-    pygame.draw.rect(tela, cor_vermelha, (400, 50, largura_barra, altura_barra), 2)
+        pygame.draw.rect(tela, cor_vermelha, (350, 100, largura_barra * (vida / 100), altura_barra))
+        pygame.draw.rect(tela, cor_preta, (350, 100, largura_barra, altura_barra), 2)
+
+def vida_knight(vida_knight):
+ 
+    largura_barra = 200
+    altura_barra = 20
+    cor_verde = (0, 200, 0)  # Cor verde
+    cor_vermelha = (255, 0, 0)  # Cor vermelha
+    if vida_knight > 0:
+        pygame.draw.rect(tela, cor_verde, (45, 19, largura_barra * (vida_knight / 150), altura_barra))
+    pygame.draw.rect(tela, cor_vermelha, (45, 19, largura_barra, altura_barra), 2)
+    tela.blit(vidapixel, (0, 3))
 
 def animacao_enemies():
     global spider_index
@@ -27,6 +39,27 @@ def animacao_enemies():
         spider_index = 0
 
     tela.blit(spider_superfice[int(spider_index)], (400, 180, 10, 10))
+
+def spider_ataque():
+    global vidaKnight
+
+    ataque_spider = (randint(0, 5000))
+    if ataque_spider >= 0 and ataque_spider < 100:
+        if jogador_rect.colliderect(spider_rect):
+            vidaKnight -= dano_spider
+        ataque_1_spider()
+    if ataque_spider > 10 and ataque_spider <= 20:
+        ataque_2_spider()
+    
+def ataque_1_spider():
+    global projSpider_rect
+
+    projSpider_rect.x += projSpider_velocidade
+    tela.blit(projSpider, projSpider_rect)
+
+
+def ataque_2_spider():
+    pass
 
 def animacao_perso():
     global player_index
@@ -61,7 +94,7 @@ def atacar(atacar_anim):
 
     if atacar_anim:
         tela.blit(atacar_superfice[int(atacar_index)], jogador_rect)
-        atacar_index += 0.09
+        atacar_index += 0.05
         if atacar_index > len(atacar_superfice) - 1:
             atacar_index = 0
 
@@ -71,23 +104,34 @@ def atacar(atacar_anim):
     else:
         animacao_perso()
 
+
 ##
 ##Importa imagens
 ##
+
+#Outros
+vidapixel = pygame.image.load('assets\icons\coracao\Heart1.png').convert_alpha()
+projSpider = pygame.image.load('assets\enemies\Items and effects\Arrows\Spider_left.png').convert_alpha()
 
 ##Pesonagem
 knight_idle = pygame.image.load("assets/knight/1 IDLE_000.png").convert_alpha()
 
 ##Background
 Background1 = pygame.image.load('assets/background/1/bamboo bridge.png').convert()
+Background2 = pygame.image.load('assets/background/2/forest bridge.png').convert()
 
 
 ##
 ## Transforma imagem
 ##
 Background1 = pygame.transform.scale(Background1, tamanho)
+Background2 = pygame.transform.scale(Background2, tamanho)
 
 knight_idle = pygame.transform.scale(knight_idle, tamanho)
+vidapixel = pygame.transform.scale(vidapixel, (50, 50))
+projSpider = pygame.transform.scale(projSpider, (110, 110))
+projSpider_rect = projSpider.get_rect(center=(400, 180))
+
 
 relogio = pygame.time.Clock()
 
@@ -131,8 +175,12 @@ for imagem in range(1, 13):
     spider_superfice.append(img)
 spider_rect = spider_superfice[int(spider_index)].get_rect(topleft=(400, 180))
 
+
+projSpider_velocidade = 3
 movimento_personagem = 0
 direcao_personagem = 0
+vidaKnight = 150
+dano_spider = 20
 dano_jogador = 10
 vida_inimigo = 100
 atacar_anim = False
@@ -195,14 +243,16 @@ while True:
         jogador_rect.y -= 7
     elif movimento_personagem == 4:
         jogador_rect.y += 7
-  
 
     tela.blit(Background1, (0, 0))
 
     animacao_perso()
     animacao_enemies()
     desenhar_barra_vida(vida_inimigo)
+    spider_ataque()
     atacar(atacar_anim)
+    vida_knight(vidaKnight)
+
 
     pygame.display.update()
 
