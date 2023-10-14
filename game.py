@@ -4,7 +4,7 @@ from sys import exit
 pygame.init()
 
 ##
-## Tela
+##  Tela
 ##
 tamanho = (960, 540)
 tela = pygame.display.set_mode(tamanho)
