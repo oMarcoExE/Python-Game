@@ -30,37 +30,46 @@ def animacao_enemies():
 
 def animacao_perso():
     global player_index
-    # Calcula o movimento do personagem
+    jogador = None
 
-    if movimento_personagem == 0: # Jogador está parado
-        knight_superfice = knight_idle_superfice
-    else: # Jogador está se movimentando
-        knight_superfice = knight_andando_superfice
-
-    # Avança para o proximo frame
-    player_index += 0.07
-    if player_index > len(knight_superfice) - 1:
-        player_index = 0
-
-
-    if direcao_personagem == 1:
-        jogador = knight_idle_superfice[int(player_index)]        
+    if atacar_anim:
+        global atacar_index
+        atacar_index += 0.09
+        if atacar_index > len(atacar_superfice) - 1:
+            atacar_index = 0
+        jogador = atacar_superfice[int(atacar_index)]
     else:
-        jogador = pygame.transform.flip(knight_superfice[int(player_index)], True, False)
+        global player_index
+        if movimento_personagem == 0:  # Jogador está parado
+            knight_superfice = knight_idle_superfice
+        else:  # Jogador está se movimentando
+            knight_superfice = knight_andando_superfice
 
-    # Desenha o jogador na tela
+        player_index += 0.07
+        if player_index > len(knight_superfice) - 1:
+            player_index = 0
+
+        if direcao_personagem == 1:
+            jogador = knight_idle_superfice[int(player_index)]
+        else:
+            jogador = pygame.transform.flip(knight_superfice[int(player_index)], True, False)
+
     tela.blit(jogador, jogador_rect)
 
-def atacar():
-    
+def atacar(atacar_anim):
     global atacar_index
 
-    atacar_index += 0.09
-    if atacar_index > len(atacar_superfice) -1:
-        atacar_index = 0
+    if atacar_anim:
+        tela.blit(atacar_superfice[int(atacar_index)], jogador_rect)
+        atacar_index += 0.09
+        if atacar_index > len(atacar_superfice) - 1:
+            atacar_index = 0
 
-    tela.blit(spider_superfice[int(spider_index)], knight_idle_superfice)
-
+        # Se a animação de ataque terminar, desative o ataque
+        if atacar_index == 0:
+            atacar_anim = False
+    else:
+        animacao_perso()
 
 ##
 ##Importa imagens
@@ -88,6 +97,7 @@ player_index = 0
 knight_idle_superfice = []
 knight_andando_superfice = []
 
+
 for imagem in range(1, 5):
     img = pygame.image.load(f'assets/knight/1 IDLE_00{imagem}.png').convert_alpha()
     img = pygame.transform.scale(img, (150, 150))
@@ -105,8 +115,8 @@ atacar_index = 0
 atacar_superfice = []
 
 for imagem in range(1, 5):
-    img = pygame.image.load(f'assets/knight/5 ATTACK_000.png').convert_alpha()
-    img = pygame.transform.scale(img, (150, 150))
+    img = pygame.image.load(f'assets/knight/5 ATTACK_00{imagem}.png').convert_alpha()
+    img = pygame.transform.scale(img, (180, 180))
     atacar_superfice.append(img)   
 
     atacar_rect = atacar_superfice[atacar_index].get_rect(center = (100, 430))
@@ -125,6 +135,7 @@ movimento_personagem = 0
 direcao_personagem = 0
 dano_jogador = 10
 vida_inimigo = 100
+atacar_anim = False
 
 status = True
 ## Loop principal
@@ -152,11 +163,11 @@ while True:
                 direcao_personagem = 0
 
             if evento.key == pygame.K_SPACE:
-                if evento.key == pygame.K_SPACE:
-                    if jogador_rect.colliderect(spider_rect):
-                        vida_inimigo -= dano_jogador
-                        if vida_inimigo <= 0:
-                            vida_inimigo = 0
+                atacar_anim = True
+                if jogador_rect.colliderect(spider_rect):
+                    vida_inimigo -= dano_jogador
+                    if vida_inimigo <= 0:
+                        vida_inimigo = 0
 
         if evento.type == pygame.KEYUP:
             if evento.key == pygame.K_RIGHT:
@@ -170,6 +181,10 @@ while True:
 
             if evento.key == pygame.K_DOWN:
                 movimento_personagem = 0
+
+            if evento.key == pygame.K_SPACE:
+                atacar_anim = False
+
 
 
     if movimento_personagem == 1:
@@ -187,6 +202,7 @@ while True:
     animacao_perso()
     animacao_enemies()
     desenhar_barra_vida(vida_inimigo)
+    atacar(atacar_anim)
 
     pygame.display.update()
 
