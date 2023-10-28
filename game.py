@@ -44,27 +44,31 @@ def spider_ataque():
     global vidaKnight
     global ataque_projetil
     global rect
+    global ataque_spider
 
     ataque_spider = (randint(0, 5000))
     rect = projSpider.get_rect(center=spider_rect.center)
-    if ataque_spider >= 0 and ataque_spider < 100:
+
+    if ataque_spider >=0 and vida_inimigo == 0:
+        ataque_spider = 1000
+        
+
+    if ataque_spider >= 0 and ataque_spider < 50:
 
         # Ataque de projetil
         ataque_projetil.append({
             'velocidade': projSpider_velocidade,
             'rect': rect,
-            'destino': jogador_rect.center
+            'destino': jogador_rect.center,
+            'criacao': pygame.time.get_ticks()
         })
 
-
-    elif ataque_spider > 150 and ataque_spider <= 200:
-        #if jogador_rect.colliderect(spider_rect):
-            #vidaKnight -= dano_spider+10
-            #ataque_2_spider()
-        pass
-    
 def animar_projeteis():
     global vidaKnight
+
+    clock_projetil = pygame.time.Clock()
+    clock_projetil.tick(120)
+
     for projetil in ataque_projetil:
         dest_x, dest_y = projetil['destino']
         vel = projetil['velocidade']
@@ -76,10 +80,23 @@ def animar_projeteis():
         if proj.x > dest_x: proj.x -= vel
         if proj.y > dest_y: proj.y -= vel
      
-        if jogador_rect.colliderect(rect):
-            pass
+        if jogador_rect.colliderect(rect) and ataque_spider < 50 :
+            vidaKnight -= dano_spider
+            ataque_projetil.remove(projetil)
+
+        if vida_inimigo == 0:
+            ataque_projetil.remove(projetil)
+            
         tela.blit(projSpider, proj)
- 
+
+
+   # nasc = projetil['criacao']
+
+   # tempo_projetil = clock_projetil - nasc
+
+    #if tempo_projetil > 120:
+     #   ataque_projetil.remove(projetil)
+    
 
 
 def ataque_2_spider():
@@ -214,7 +231,7 @@ for imagem in range(1, 13):
 spider_rect = spider_superfice[int(spider_index)].get_rect(topleft=(400, 180))
 
 
-projSpider_velocidade = 3
+projSpider_velocidade = 2.4287
 movimento_personagem = 0
 direcao_personagem = 0
 vidaKnight = 150
